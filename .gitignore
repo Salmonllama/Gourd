@@ -17,3 +17,4 @@ vendor/
 # Other stuff
 out/
 config.json
+fsbot_go
