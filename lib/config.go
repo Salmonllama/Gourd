@@ -8,21 +8,21 @@ import (
 
 // Configuration is the basis for the config
 type Configuration struct {
-	Token 			string `json:"token"`
-	HomeGuild 		string `json:"home_guild"`
-	LogChannel 		string `json:"log_channel"`
-	ReportChannel 	string `json:"report_channel"`
-	ReportLog 		string `json:"report_log"`
+	Token string `json:"token"`
+	HomeGuild string `json:"home_guild"`
+	LogChannel string `json:"log_channel"`
+	ReportChannel string `json:"report_channel"`
+	ReportLog string `json:"report_log"`
 	Imgur struct {
-		ClientID 	string `json:"client_id"`
+		ClientID string `json:"client_id"`
 		BearerToken string `json:"bearer_token"`
 	} `json:"imgur"`
 	Database struct {
-		Hostname 	string `json:"hostname"`
-		Port 		string `json:"port"`
-		Username 	string `json:"username"`
-		Password 	string `json:"password"`
-		Name 		string `json:"name"`
+		Hostname string `json:"hostname"`
+		Port string `json:"port"`
+		Username string `json:"username"`
+		Password string `json:"password"`
+		Name string `json:"name"`
 	} `json:"database"`
 }
 
