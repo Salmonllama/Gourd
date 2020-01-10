@@ -1,13 +1,14 @@
-package lib
+package fsbot
 
 import (
-	"github.com/andersfylling/disgord"
 	"context"
+	"github.com/andersfylling/disgord"
+	"github.com/salmonllama/fsbot_go/lib"
 )
 
 type FSBot struct {
 	Client *disgord.Client
-	Config Configuration
+	Config lib.Configuration
 	// Add Database
 }
 
@@ -17,7 +18,7 @@ func (bot *FSBot) Connect() error {
 }
 
 // New creates a new instance of FSBot
-func New(config Configuration) *FSBot {
+func New(config lib.Configuration) *FSBot {
 	dgClient := disgord.New(disgord.Config{
 		BotToken: config.Token,
 	})
