@@ -1,0 +1,18 @@
+{
+    "token": "",
+    "home_guild": "",
+    "log_channel": "",
+    "report_channel": "",
+    "report_log": "",
+    "imgur": {
+        "client_id": "",
+        "bearer_token": ""
+    },
+    "database": {
+        "hostname": "",
+        "port": "",
+        "username": "",
+        "password": "",
+        "name": ""
+    }
+}
