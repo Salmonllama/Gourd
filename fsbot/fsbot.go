@@ -12,6 +12,11 @@ type FSBot struct {
 	// Add Database
 }
 
+func (bot *FSBot) isHomeGuild(id string) bool {
+	return bot.Config.HomeGuild == id
+}
+
+// Connect opens the connection to discord
 func (bot *FSBot) Connect() error {
 	defer bot.Client.StayConnectedUntilInterrupted(context.Background())
 	return nil
