@@ -1,10 +1,11 @@
 package main
 
 import (
-	"context"
 	"fmt"
 	"github.com/andersfylling/disgord"
+	"github.com/salmonllama/fsbot_go/fsbot"
 	"github.com/salmonllama/fsbot_go/lib"
+	"os"
 )
 
 var (
@@ -17,11 +18,14 @@ func printMessage(session disgord.Session, evt *disgord.MessageCreate) {
 }
 
 func main() {
-	client := disgord.New(disgord.Config{
-		BotToken: config.Token,
-	})
+	os.Exit(lifecycle())
+}
 
-	defer client.StayConnectedUntilInterrupted(context.Background())
-
-	client.On(disgord.EvtMessageCreate, printMessage)
+func lifecycle() int {
+	bot := fsbot.New(config)
+	if bot != nil {
+		err := bot.Connect()
+		lib.Check(err)
+	}
+	return 0
 }
