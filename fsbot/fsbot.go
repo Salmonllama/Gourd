@@ -9,7 +9,7 @@ import (
 type FSBot struct {
 	Client *disgord.Client
 	Config lib.Configuration
-	// Add Database
+	// TODO: Add Database and Handler to the FSBot struct
 }
 
 func (bot *FSBot) isHomeGuild(id string) bool {
