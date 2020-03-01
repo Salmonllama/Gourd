@@ -17,5 +17,6 @@ vendor/
 
 # Other stuff
 out/
-config.json
-fsbot_go
+
+# Ignore the scripts directory
+./scripts
