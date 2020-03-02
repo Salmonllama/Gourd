@@ -54,6 +54,15 @@ func (ctx *CommandContext) IsPrivate() bool {
 	return ctx.message.IsDirectMessage()
 }
 
+func (ctx *CommandContext) Guild() *disgord.Guild {
+	guild, err := ctx.client.GetGuild(context.Background(), ctx.message.GuildID)
+	if err != nil {
+		// TODO: error handling
+	}
+
+	return guild
+}
+
 func (ctx *CommandContext) Author() *disgord.User {
 	return ctx.message.Author
 }
