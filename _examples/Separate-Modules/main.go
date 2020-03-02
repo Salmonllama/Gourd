@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/Salmonllama/Gourd"
-	"github.com/Salmonllama/Gourd/examples/Separate-Modules/modules"
+	"github.com/Salmonllama/Gourd/_examples/Separate-Modules/modules"
 	"os"
 )
 
