@@ -47,26 +47,26 @@ func (ctx *CommandContext) Command() *Command {
 
 // Reply sends a message to the channel the command was used in.
 // Input is any type, see https://github.com/andersfylling/disgord/blob/39ba986ca2e94602ce44f4bf7625063124bdc325/client.go#L705
-func (ctx *CommandContext) Reply(data ...interface{}) *disgord.Message {
+func (ctx *CommandContext) Reply(data ...interface{}) (*disgord.Message, error) {
 	msg, err := ctx.message.Reply(context.Background(), ctx.client, data...)
 	if err != nil {
-		// TODO: error handling within gourd
+		return nil, err
 	}
 
-	return msg
+	return msg, nil
 }
 
 func (ctx *CommandContext) IsPrivate() bool {
 	return ctx.message.IsDirectMessage()
 }
 
-func (ctx *CommandContext) Guild() *disgord.Guild {
+func (ctx *CommandContext) Guild() (*disgord.Guild, error) {
 	guild, err := ctx.client.GetGuild(context.Background(), ctx.message.GuildID)
 	if err != nil {
-		// TODO: error handling
+		return nil, err
 	}
 
-	return guild
+	return guild, nil
 }
 
 func (ctx *CommandContext) Author() *disgord.User {

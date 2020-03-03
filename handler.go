@@ -68,7 +68,10 @@ func (handler *Handler) handleRoleInhibitor(ctx CommandContext) bool {
 	}
 
 	if inhibitor.Response != nil {
-		ctx.Reply(inhibitor.Response)
+		_, err := ctx.Reply(inhibitor.Response)
+		if err != nil {
+			return false
+		}
 	}
 	return false
 }
@@ -80,15 +83,20 @@ func (handler *Handler) handlePermissionInhibitor(ctx CommandContext) bool {
 		return false
 	}
 
+	guild, err := ctx.Guild()
+	if err != nil {
+		return false
+	}
+
 	inhibitor := ctx.Command().Module().Inhibitor.(PermissionInhibitor)
 	requiredPerm := inhibitor.Value
 	userPerm, err := ctx.Client().GetMemberPermissions(
 		context.Background(),
-		ctx.Guild().ID,
+		guild.ID,
 		ctx.Author().ID,
 	)
 	if err != nil {
-		// TODO: Error handling
+		return false
 	}
 
 	if userPerm&disgord.PermissionAdministrator > 0 { // Admin is a diff. permission
@@ -100,7 +108,10 @@ func (handler *Handler) handlePermissionInhibitor(ctx CommandContext) bool {
 	}
 
 	if inhibitor.Response != nil {
-		ctx.Reply(inhibitor.Response)
+		_, err := ctx.Reply(inhibitor.Response)
+		if err != nil {
+			return false
+		}
 	}
 	return false
 }
@@ -121,7 +132,10 @@ func (handler *Handler) handleOwnerInhibitor(ctx CommandContext) bool {
 	}
 
 	if inhibitor.Response != nil {
-		ctx.Reply(inhibitor.Response)
+		_, err := ctx.Reply(inhibitor.Response)
+		if err != nil {
+			return false
+		}
 	}
 	return false
 }

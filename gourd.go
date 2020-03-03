@@ -7,7 +7,6 @@ import (
 	"strings"
 )
 
-// TODO: Update examples!
 type Gourd struct { // TODO: Add support for server specific prefixes
 	client        *disgord.Client
 	defaultPrefix string
@@ -16,7 +15,7 @@ type Gourd struct { // TODO: Add support for server specific prefixes
 }
 
 // Takes a message and decides if it should be treated as a command or not
-func (bot *Gourd) ProcessCommand(session disgord.Session, evt *disgord.MessageCreate) {
+func (bot *Gourd) ProcessCommand(_ disgord.Session, evt *disgord.MessageCreate) {
 	msg := evt.Message
 	messageContent := msg.Content
 
