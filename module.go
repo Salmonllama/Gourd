@@ -1,34 +1,40 @@
 package gourd
 
 type Module struct {
-	Name     string
-	commands []*Command
-	Access   AccessType // 0 is all, 1 is none, 2 is home
+	Name      string
+	Inhibitor interface{}
+	Commands  []*Command
 }
 
-type AccessType int
-
-const (
-	All AccessType = iota
-	None
-	Home
-)
-
-func NewModule(name string, access AccessType) *Module {
+// Modules by default are initialized with a NilInhibitor. It can be overwritten.
+func NewModule(name string) *Module {
 	return &Module{
-		Name:     name,
-		commands: nil,
-		Access:   access,
+		Name:      name,
+		Commands:  nil,
+		Inhibitor: NilInhibitor{},
 	}
 }
 
-func (mdl *Module) AddCommands(cmd ...*Command) *Module {
-	mdl.commands = append(mdl.commands, cmd...)
-	return mdl
+func (module *Module) NewCommand(aliases ...string) *Command {
+	return &Command{
+		name:    aliases[0],
+		aliases: aliases,
+		module:  module,
+	}
 }
 
-func (mdl *Module) AddCommand(cmd *Command) *Module {
-	mdl.commands = append(mdl.commands, cmd)
+func (module *Module) SetInhibitor(inhibitor interface{}) *Module {
+	module.Inhibitor = inhibitor
+	return module
+}
 
-	return mdl
+func (module *Module) AddCommands(cmds ...*Command) *Module {
+	module.Commands = append(module.Commands, cmds...)
+	return module
+}
+
+func (module *Module) AddCommand(cmd *Command) *Module {
+	module.Commands = append(module.Commands, cmd)
+
+	return module
 }

@@ -10,11 +10,8 @@ type Command struct {
 	help        string
 	aliases     []string
 	permissions []disgord.PermissionBit
+	module      *Module
 	run         func(ctx CommandContext)
-}
-
-func NewCommand(aliases ...string) *Command {
-	return &Command{name: aliases[0], aliases: aliases}
 }
 
 func (cmd *Command) Name() string {
@@ -35,6 +32,10 @@ func (cmd *Command) Aliases() []string {
 
 func (cmd *Command) Permissions() []disgord.PermissionBit {
 	return cmd.permissions
+}
+
+func (cmd *Command) Module() *Module {
+	return cmd.module
 }
 
 func (cmd *Command) SetDescription(desc string) *Command {
