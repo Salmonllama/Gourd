@@ -20,10 +20,6 @@ import (
 type NilInhibitor struct {
 }
 
-func (inhibitor *NilInhibitor) String() string {
-	return "This command requires no permissions."
-}
-
 /*
  * Role Inhibitor
  * Allows command usage if the user has the role (value)
@@ -42,10 +38,6 @@ type RoleInhibitor struct {
 type PermissionInhibitor struct {
 	Value    disgord.PermissionBit
 	Response interface{}
-}
-
-func (inhibitor *PermissionInhibitor) GetValue() disgord.PermissionBit {
-	return inhibitor.Value
 }
 
 /*
