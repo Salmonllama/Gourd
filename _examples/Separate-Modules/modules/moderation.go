@@ -7,16 +7,19 @@ import (
 	"strings"
 )
 
-func ModuleModeration() (module *gourd.Module) {
-	module = gourd.NewModule("Moderation", 0).AddCommands(kick(), ban())
-
-	return
+var ModerationModule = &gourd.Module{
+	Name: "Moderation",
+	Inhibitor: gourd.PermissionInhibitor{
+		Value:    disgord.PermissionManageServer,                               // Manage Server is required to use any commands in this module
+		Response: "You need the Manage Server permission to use this command!", // Can also be any interface{} supported by disgord -> client.SendMsg()
+	},
+	Commands: []*gourd.Command{kick(), ban()},
 }
 
 func kick() (command *gourd.Command) {
-	command = gourd.NewCommand("kick", "boot", "bai")   // Aliases are mandatory
-	command.SetDescription("Kicks the mentioned users") // Description is optional
-	command.SetHelp("[]users, reason for the kick")     // Help is optional
+	command = ModerationModule.NewCommand("kick", "boot", "bai") // Aliases are mandatory
+	command.SetDescription("Kicks the mentioned users")          // Description is optional
+	command.SetHelp("[]users, reason for the kick")              // Help is optional
 
 	command.SetOnAction(func(ctx gourd.CommandContext) {
 		if ctx.IsPrivate() {
@@ -39,7 +42,7 @@ func kick() (command *gourd.Command) {
 }
 
 func ban() (command *gourd.Command) {
-	command = gourd.NewCommand("ban", "banana", "hammertime")
+	command = ModerationModule.NewCommand("ban", "banana", "hammertime")
 	command.SetDescription("Bans the mentioned users")
 	command.SetHelp("[]users, reason for the ban")
 

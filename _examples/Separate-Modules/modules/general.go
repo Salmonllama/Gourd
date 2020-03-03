@@ -4,16 +4,18 @@ import (
 	"github.com/Salmonllama/Gourd"
 )
 
-func ModuleGeneral() (module *gourd.Module) {
-	module = gourd.NewModule("General", 0).AddCommands(ping())
-
-	return module
+var GeneralModule = &gourd.Module{
+	Name:      "General",
+	Inhibitor: gourd.NilInhibitor{}, // No inhibition required; anyone can use this command
+	Commands: []*gourd.Command{
+		ping(),
+	},
 }
 
 func ping() (command *gourd.Command) {
-	command = gourd.NewCommand("ping")
+	command = GeneralModule.NewCommand("ping")
 	command.SetOnAction(func(ctx gourd.CommandContext) {
-		ctx.Reply("boop")
+		ctx.Reply("Pong!")
 	})
 
 	return
