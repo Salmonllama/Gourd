@@ -7,10 +7,12 @@ import (
 	"strings"
 )
 
+// TODO: Update examples!
 type Gourd struct { // TODO: Add support for server specific prefixes
-	Client        *disgord.Client
-	DefaultPrefix string
+	client        *disgord.Client
+	defaultPrefix string
 	handler       *Handler
+	ownerId       string
 }
 
 // Takes a message and decides if it should be treated as a command or not
@@ -22,6 +24,8 @@ func (bot *Gourd) ProcessCommand(session disgord.Session, evt *disgord.MessageCr
 	if msg.Author.Bot {
 		return
 	}
+
+	// Blacklist checks go here
 
 	// Check validity and find the prefix that was used
 	valid, usedPrefix := bot.usesPrefix(msg)
@@ -41,17 +45,25 @@ func (bot *Gourd) ProcessCommand(session disgord.Session, evt *disgord.MessageCr
 	}
 
 	ctx := CommandContext{
-		prefix:  usedPrefix,
-		args:    args,
-		command: commandUsed,
-		message: msg,
-		client:  bot.Client,
+		prefix:      usedPrefix,
+		args:        args,
+		commandUsed: commandUsed,
+		message:     msg,
+		client:      bot.client,
+		gourd:       bot,
 	}
 
 	// Check if it's an existing command
 	for _, cmd := range bot.handler.Commands {
 		for _, alias := range cmd.aliases {
 			if alias == strings.ToLower(commandUsed) {
+				ctx.command = cmd
+
+				// Check for permission
+				if !bot.hasPermission(ctx) {
+					return
+				}
+
 				cmd.run(ctx)
 			}
 		}
@@ -60,8 +72,8 @@ func (bot *Gourd) ProcessCommand(session disgord.Session, evt *disgord.MessageCr
 
 // usesPrefix checks to see if the message starts with a registered prefix and therefore will trigger the command
 func (bot *Gourd) usesPrefix(msg *disgord.Message) (bool, string) {
-	if strings.HasPrefix(msg.Content, bot.DefaultPrefix) { // TODO: else if server specific prefix
-		return true, bot.DefaultPrefix
+	if strings.HasPrefix(msg.Content, bot.defaultPrefix) { // TODO: else if server specific prefix
+		return true, bot.defaultPrefix
 	} else {
 		return false, ""
 	}
@@ -97,6 +109,25 @@ func removeSpaces(slice []string) (ret []string) {
 	return
 }
 
+func (bot *Gourd) hasPermission(ctx CommandContext) bool {
+	inhibitorInterface := ctx.Command().Module().Inhibitor
+
+	switch inhibitorInterface.(type) {
+	case NilInhibitor:
+		return bot.handler.handleNilInhibitor()
+	case RoleInhibitor:
+		return bot.handler.handleRoleInhibitor(ctx)
+	case PermissionInhibitor:
+		return bot.handler.handlePermissionInhibitor(ctx)
+	case KeywordInhibitor:
+		return bot.handler.handleKeywordInhibitor(ctx)
+	case OwnerInhibitor:
+		return bot.handler.handleOwnerInhibitor(ctx)
+	default:
+		return false
+	}
+}
+
 func (bot *Gourd) AddModule(mdl *Module) *Gourd {
 	bot.handler.AddModule(mdl)
 	return bot
@@ -110,23 +141,24 @@ func (bot *Gourd) AddModules(modules ...*Module) *Gourd {
 
 // Connect opens the connection to discord
 func (bot *Gourd) Connect() error {
-	err := bot.Client.StayConnectedUntilInterrupted(context.Background())
+	err := bot.client.StayConnectedUntilInterrupted(context.Background())
 	internal.Check(err)
 	return nil
 }
 
 // New creates a new instance of FSBot
-func New(token string, defaultPrefix string) *Gourd {
+func New(token string, ownerId string, defaultPrefix string) *Gourd {
 	client := disgord.New(disgord.Config{
 		BotToken: token,
 	})
 
-	cmd := Handler{}
+	handler := Handler{}
 
 	gourd := &Gourd{
-		Client:        client,
-		DefaultPrefix: defaultPrefix,
-		handler:       &cmd,
+		client:        client,
+		defaultPrefix: defaultPrefix,
+		handler:       &handler,
+		ownerId:       ownerId,
 	}
 
 	client.On(disgord.EvtMessageCreate, gourd.ProcessCommand)

@@ -6,11 +6,13 @@ import (
 )
 
 type CommandContext struct {
-	prefix  string
-	args    []string
-	command string
-	message *disgord.Message
-	client  *disgord.Client
+	prefix      string
+	args        []string
+	commandUsed string
+	message     *disgord.Message
+	client      *disgord.Client
+	gourd       *Gourd
+	command     *Command
 }
 
 // Prefix returns the prefix used in the command
@@ -23,8 +25,8 @@ func (ctx *CommandContext) Args() []string {
 	return ctx.args
 }
 
-func (ctx *CommandContext) Command() string {
-	return ctx.command
+func (ctx *CommandContext) CommandUsed() string {
+	return ctx.commandUsed
 }
 
 // Message returns the message object for the command message.
@@ -37,6 +39,10 @@ func (ctx *CommandContext) Message() *disgord.Message {
 // It is not recommended to use this directly, use the convenience methods instead, if possible
 func (ctx *CommandContext) Client() *disgord.Client {
 	return ctx.client
+}
+
+func (ctx *CommandContext) Command() *Command {
+	return ctx.command
 }
 
 // Reply sends a message to the channel the command was used in.
@@ -69,4 +75,8 @@ func (ctx *CommandContext) Author() *disgord.User {
 
 func (ctx *CommandContext) AuthorMember() *disgord.Member {
 	return ctx.message.Member
+}
+
+func (ctx *CommandContext) IsAuthorOwner() bool {
+	return ctx.Author().ID.String() == ctx.gourd.ownerId
 }

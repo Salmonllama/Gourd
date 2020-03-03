@@ -21,13 +21,17 @@ func lifecycle() int {
 
 func startup() *gourd.Gourd {
 	// Create a new instance of Gourd
-	bot := gourd.New("your-bot-token-here", "!")
+	bot := gourd.New(
+		"bot-token-here",
+		"owner-id-here",
+		"default-prefix-here",
+	)
 
 	// Add any defined modules
 	// Don't forget to add your commands to your modules!
 	bot.AddModules(
-		modules.ModuleGeneral(),
-		modules.ModuleModeration(),
+		modules.GeneralModule,
+		modules.ModerationModule,
 	)
 
 	return bot
