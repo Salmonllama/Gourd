@@ -12,6 +12,7 @@ type Gourd struct { // TODO: Add support for server specific prefixes
 	defaultPrefix string
 	handler       *Handler
 	ownerId       string
+	keywords      map[string]string
 }
 
 // Takes a message and decides if it should be treated as a command or not
@@ -137,6 +138,13 @@ func (bot *Gourd) AddModules(modules ...*Module) *Gourd {
 
 	return bot
 }
+func (bot *Gourd) AddKeyword(userId string, keyword string) {
+	bot.keywords[userId] = keyword
+}
+
+func (bot *Gourd) HasKeyword(userId string, keyword string) bool {
+	return bot.keywords[userId] == keyword
+}
 
 // Connect opens the connection to discord
 func (bot *Gourd) Connect() error {
@@ -158,6 +166,7 @@ func New(token string, ownerId string, defaultPrefix string) *Gourd {
 		defaultPrefix: defaultPrefix,
 		handler:       &handler,
 		ownerId:       ownerId,
+		keywords:      make(map[string]string, 0),
 	}
 
 	client.On(disgord.EvtMessageCreate, gourd.ProcessCommand)

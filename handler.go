@@ -119,8 +119,18 @@ func (handler *Handler) handlePermissionInhibitor(ctx CommandContext) bool {
 // handleKeywordInhibitor looks for assigned keywords on the user
 // Works in direct messages; is not guild-dependant
 func (handler *Handler) handleKeywordInhibitor(ctx CommandContext) bool {
-	// TODO: NOT IMPLEMENTED YET
-	// Needs gourd methods for adding keywords to users, and retrieving keywords
+	inhibitor := ctx.Command().Module().Inhibitor.(KeywordInhibitor)
+
+	if ctx.gourd.HasKeyword(ctx.Author().ID.String(), inhibitor.Value) {
+		return true
+	}
+
+	if inhibitor.Response != nil {
+		_, err := ctx.Reply(inhibitor.Response)
+		if err != nil {
+			return false
+		}
+	}
 	return false
 }
 
