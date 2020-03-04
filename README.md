@@ -17,8 +17,6 @@ and reached via DM at Salmonllama#5727.
 
 #### TODO:
 
-- Proper Error Handling!!!! (critical priority)
-- Finishing KeywordInhibition (low priority?)
 - Built-in SQLite database (very high priority)
 - Guild-based prefixes (very high priority)
 - User/Guild blacklists (I-don't-even-know-if-this-is-needed priority)
