@@ -57,7 +57,7 @@ func (handler *Handler) handleRoleInhibitor(ctx CommandContext) bool {
 		return false
 	}
 
-	inhibitor := ctx.Command.Module.Inhibitor.(RoleInhibitor)
+	inhibitor := ctx.Command.Inhibitor.(RoleInhibitor)
 	requiredRole := inhibitor.Value // This will be the ID
 	userRoles := ctx.AuthorMember().Roles
 
@@ -88,7 +88,7 @@ func (handler *Handler) handlePermissionInhibitor(ctx CommandContext) bool {
 		return false
 	}
 
-	inhibitor := ctx.Command.Module.Inhibitor.(PermissionInhibitor)
+	inhibitor := ctx.Command.Inhibitor.(PermissionInhibitor)
 	requiredPerm := inhibitor.Value
 	userPerm, err := ctx.Client.GetMemberPermissions(
 		context.Background(),
@@ -119,7 +119,7 @@ func (handler *Handler) handlePermissionInhibitor(ctx CommandContext) bool {
 // handleKeywordInhibitor looks for assigned keywords on the user
 // Works in direct messages; is not guild-dependant
 func (handler *Handler) handleKeywordInhibitor(ctx CommandContext) bool {
-	inhibitor := ctx.Command.Module.Inhibitor.(KeywordInhibitor)
+	inhibitor := ctx.Command.Inhibitor.(KeywordInhibitor)
 
 	if ctx.Gourd.HasKeyword(ctx.Author().ID.String(), inhibitor.Value) {
 		return true
@@ -135,7 +135,7 @@ func (handler *Handler) handleKeywordInhibitor(ctx CommandContext) bool {
 }
 
 func (handler *Handler) handleOwnerInhibitor(ctx CommandContext) bool {
-	inhibitor := ctx.Command.Module.Inhibitor.(OwnerInhibitor)
+	inhibitor := ctx.Command.Inhibitor.(OwnerInhibitor)
 
 	if ctx.IsAuthorOwner() {
 		return true
@@ -148,4 +148,8 @@ func (handler *Handler) handleOwnerInhibitor(ctx CommandContext) bool {
 		}
 	}
 	return false
+}
+
+func respond() {
+	// TODO: Move inhibitor response logic into here
 }
