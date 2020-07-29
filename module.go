@@ -17,15 +17,10 @@ func NewModule(name string) *Module {
 
 func (module *Module) NewCommand(aliases ...string) *Command {
 	return &Command{
-		name:    aliases[0],
-		aliases: aliases,
-		module:  module,
+		Name:    aliases[0],
+		Aliases: aliases,
+		Module:  module,
 	}
-}
-
-func (module *Module) SetInhibitor(inhibitor interface{}) *Module {
-	module.Inhibitor = inhibitor
-	return module
 }
 
 func (module *Module) AddCommands(cmds ...*Command) *Module {

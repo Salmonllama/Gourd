@@ -37,7 +37,7 @@ func (bot *Gourd) ProcessCommand(_ disgord.Session, evt *disgord.MessageCreate) 
 	trimmedMessage := bot.trimPrefix(messageContent, usedPrefix)
 
 	// Split the trimmed message into command and command args
-	commandUsed, args := bot.separateCommand(trimmedMessage)
+	commandString, args := bot.separateCommand(trimmedMessage)
 
 	// Check that it's actually a command
 	if len(msg.Content) == 1 {
@@ -45,26 +45,26 @@ func (bot *Gourd) ProcessCommand(_ disgord.Session, evt *disgord.MessageCreate) 
 	}
 
 	ctx := CommandContext{
-		prefix:      usedPrefix,
-		args:        args,
-		commandUsed: commandUsed,
-		message:     msg,
-		client:      bot.client,
-		gourd:       bot,
+		Prefix:        usedPrefix,
+		Args:          args,
+		CommandString: commandString,
+		Message:       msg,
+		Client:        bot.client,
+		Gourd:         bot,
 	}
 
 	// Check if it's an existing command
 	for _, cmd := range bot.handler.Commands {
-		for _, alias := range cmd.aliases {
-			if alias == strings.ToLower(commandUsed) {
-				ctx.command = cmd
+		for _, alias := range cmd.Aliases {
+			if alias == strings.ToLower(commandString) {
+				ctx.Command = cmd
 
 				// Check for permission
 				if !bot.hasPermission(ctx) {
 					return
 				}
 
-				cmd.run(ctx)
+				cmd.Run(ctx)
 			}
 		}
 	}
@@ -110,7 +110,7 @@ func removeSpaces(slice []string) (ret []string) {
 }
 
 func (bot *Gourd) hasPermission(ctx CommandContext) bool {
-	inhibitorInterface := ctx.Command().Module().Inhibitor
+	inhibitorInterface := ctx.Command.Module.Inhibitor // TODO: Maybe move inhibitors to commands?
 
 	switch inhibitorInterface.(type) {
 	case NilInhibitor:
@@ -153,7 +153,7 @@ func (bot *Gourd) Connect() error {
 	return nil
 }
 
-// New creates a new instance of FSBot
+// New creates a new instance of Gourd
 func New(token string, ownerId string, defaultPrefix string) *Gourd {
 	client := disgord.New(disgord.Config{
 		BotToken: token,

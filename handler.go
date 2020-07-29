@@ -19,7 +19,7 @@ func (handler *Handler) GetCommandMap() map[string]*Command {
 	cmdMap := make(map[string]*Command)
 
 	for _, cmd := range handler.Commands {
-		cmdMap[cmd.name] = cmd
+		cmdMap[cmd.Name] = cmd
 	}
 
 	return cmdMap
@@ -57,7 +57,7 @@ func (handler *Handler) handleRoleInhibitor(ctx CommandContext) bool {
 		return false
 	}
 
-	inhibitor := ctx.Command().Module().Inhibitor.(RoleInhibitor)
+	inhibitor := ctx.Command.Module.Inhibitor.(RoleInhibitor)
 	requiredRole := inhibitor.Value // This will be the ID
 	userRoles := ctx.AuthorMember().Roles
 
@@ -88,9 +88,9 @@ func (handler *Handler) handlePermissionInhibitor(ctx CommandContext) bool {
 		return false
 	}
 
-	inhibitor := ctx.Command().Module().Inhibitor.(PermissionInhibitor)
+	inhibitor := ctx.Command.Module.Inhibitor.(PermissionInhibitor)
 	requiredPerm := inhibitor.Value
-	userPerm, err := ctx.Client().GetMemberPermissions(
+	userPerm, err := ctx.Client.GetMemberPermissions(
 		context.Background(),
 		guild.ID,
 		ctx.Author().ID,
@@ -119,9 +119,9 @@ func (handler *Handler) handlePermissionInhibitor(ctx CommandContext) bool {
 // handleKeywordInhibitor looks for assigned keywords on the user
 // Works in direct messages; is not guild-dependant
 func (handler *Handler) handleKeywordInhibitor(ctx CommandContext) bool {
-	inhibitor := ctx.Command().Module().Inhibitor.(KeywordInhibitor)
+	inhibitor := ctx.Command.Module.Inhibitor.(KeywordInhibitor)
 
-	if ctx.gourd.HasKeyword(ctx.Author().ID.String(), inhibitor.Value) {
+	if ctx.Gourd.HasKeyword(ctx.Author().ID.String(), inhibitor.Value) {
 		return true
 	}
 
@@ -135,7 +135,7 @@ func (handler *Handler) handleKeywordInhibitor(ctx CommandContext) bool {
 }
 
 func (handler *Handler) handleOwnerInhibitor(ctx CommandContext) bool {
-	inhibitor := ctx.Command().Module().Inhibitor.(OwnerInhibitor)
+	inhibitor := ctx.Command.Module.Inhibitor.(OwnerInhibitor)
 
 	if ctx.IsAuthorOwner() {
 		return true
