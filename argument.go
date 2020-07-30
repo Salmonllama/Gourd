@@ -10,6 +10,8 @@ const (
 
 type Argument struct {
 	Name       string
-	Type       ArgType
 	Descriptor string
+	Type       ArgType
+	Optional   bool
+	Default    string
 }
