@@ -6,7 +6,7 @@ import (
 )
 
 type Inhibitor struct {
-	Value interface{}
+	Value    interface{}
 	Response interface{}
 }
 
@@ -14,7 +14,7 @@ type InhibitorHandler interface {
 	handle(ctx CommandContext) bool
 }
 
-// Interface with a handle function -> interfacing makes it easer to work with in the main gourd logic
+// Interface with a handle function -> interfacing makes it easier to work with in the main gourd logic
 
 // Nil Inhibitor.
 // Allows command usage no matter what.
