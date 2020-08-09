@@ -7,8 +7,8 @@ import (
 	"strings"
 )
 
-type Gourd struct { // TODO: Add support for server specific prefixes
-	client        *disgord.Client
+type Gourd struct {
+	client        *disgord.Client // TODO: Embedded type? BOOK
 	defaultPrefix string
 	handler       *Handler
 	ownerId       string
@@ -44,26 +44,37 @@ func (bot *Gourd) ProcessCommand(_ disgord.Session, evt *disgord.MessageCreate) 
 		return
 	}
 
-	ctx := CommandContext{
-		Prefix:        usedPrefix,
-		Args:          args,
-		CommandString: commandString,
-		Message:       msg,
-		Client:        bot.client,
-		Gourd:         bot,
-	}
+	// Handle argument parsing
 
 	// Check if it's an existing command
 	for _, cmd := range bot.handler.Commands {
 		for _, alias := range cmd.Aliases {
 			if alias == strings.ToLower(commandString) {
-				ctx.Command = cmd
+				// Parse arguments
 
-				// Check for permission
-				if !bot.hasPermission(ctx) {
-					return
+				// Create the command's context
+				ctx := CommandContext{
+					Command:       cmd,
+					Prefix:        usedPrefix,
+					Args:          args,
+					CommandString: commandString,
+					Message:       msg,
+					Client:        bot.client,
+					Gourd:         bot,
 				}
 
+				// Check if the user has permission to pass inhibition
+				if !bot.hasPermission(ctx) {
+					// Send the inhibitors no-no response, if not nil
+					if ctx.Command.Inhibitor.(Inhibitor).Response != nil {
+						_, err := ctx.Reply(ctx.Command.Inhibitor.(Inhibitor).Response)
+						if err != nil {
+							internal.PrintCheck(err)
+						}
+					}
+				}
+
+				// Run the command
 				cmd.Run(ctx)
 			}
 		}
@@ -110,22 +121,9 @@ func removeSpaces(slice []string) (ret []string) {
 }
 
 func (bot *Gourd) hasPermission(ctx CommandContext) bool {
-	inhibitorInterface := ctx.Command.Module.Inhibitor // TODO: Maybe move inhibitors to commands?
+	inhibitor := ctx.Command.Inhibitor.(inhibitor)
 
-	switch inhibitorInterface.(type) {
-	case NilInhibitor:
-		return bot.handler.handleNilInhibitor()
-	case RoleInhibitor:
-		return bot.handler.handleRoleInhibitor(ctx)
-	case PermissionInhibitor:
-		return bot.handler.handlePermissionInhibitor(ctx)
-	case KeywordInhibitor:
-		return bot.handler.handleKeywordInhibitor(ctx)
-	case OwnerInhibitor:
-		return bot.handler.handleOwnerInhibitor(ctx)
-	default:
-		return false
-	}
+	return inhibitor.handle(ctx)
 }
 
 func (bot *Gourd) AddModule(mdl *Module) *Gourd {
