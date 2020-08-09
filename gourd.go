@@ -121,7 +121,7 @@ func removeSpaces(slice []string) (ret []string) {
 }
 
 func (bot *Gourd) hasPermission(ctx CommandContext) bool {
-	inhibitor := ctx.Command.Inhibitor.(inhibitor)
+	inhibitor := ctx.Command.Inhibitor.(InhibitorHandler)
 
 	return inhibitor.handle(ctx)
 }
