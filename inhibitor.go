@@ -10,7 +10,7 @@ type Inhibitor struct {
 	Response interface{}
 }
 
-type inhibitor interface {
+type InhibitorHandler interface {
 	handle(ctx CommandContext) bool
 }
 
