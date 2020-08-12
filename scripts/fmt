@@ -1,0 +1,6 @@
+#!/bin/bash
+
+echo Formatting the project...
+gofmt -w .
+wait
+echo Done!

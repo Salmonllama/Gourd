@@ -17,6 +17,3 @@ vendor/
 
 # Other stuff
 out/
-
-# Ignore the scripts directory
-/scripts/
