@@ -16,16 +16,19 @@ type ConsoleLogger struct{}
 var Console = ConsoleLogger{}
 
 func (ConsoleLogger) Debug(m ...interface{}) {
-	fmt.Printf("%v | DEBUG - ", time.Now().Clock())
+	hour, min, sec := time.Now().Clock()
+	fmt.Printf("%v:%v:%v | DEBUG - ", hour, min, sec)
 	fmt.Println(m)
 }
 
 func (ConsoleLogger) Info(m ...interface{}) {
-	fmt.Printf("%v | INFO - ", time.Now().Clock())
+	hour, min, sec := time.Now().Clock()
+	fmt.Printf("%v:%v:%v | INFO - ", hour, min, sec)
 	fmt.Println(m)
 }
 
 func (ConsoleLogger) Err(m ...interface{}) {
-	fmt.Printf("%v | Error - ", time.Now().Clock())
+	hour, min, sec := time.Now().Clock()
+	fmt.Printf("%v:%v:%v | Error - ", hour, min, sec)
 	fmt.Println(m)
 }
