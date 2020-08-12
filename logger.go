@@ -18,17 +18,17 @@ var Console = ConsoleLogger{}
 func (ConsoleLogger) Debug(m ...interface{}) {
 	hour, min, sec := time.Now().Clock()
 	fmt.Printf("%v:%v:%v | DEBUG - ", hour, min, sec)
-	fmt.Println(m)
+	fmt.Println(m...)
 }
 
 func (ConsoleLogger) Info(m ...interface{}) {
 	hour, min, sec := time.Now().Clock()
 	fmt.Printf("%v:%v:%v | INFO - ", hour, min, sec)
-	fmt.Println(m)
+	fmt.Println(m...)
 }
 
 func (ConsoleLogger) Err(m ...interface{}) {
 	hour, min, sec := time.Now().Clock()
 	fmt.Printf("%v:%v:%v | Error - ", hour, min, sec)
-	fmt.Println(m)
+	fmt.Println(m...)
 }
