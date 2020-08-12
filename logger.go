@@ -11,7 +11,8 @@ type Logger interface {
 	Err(m ...interface{})
 }
 
-type ConsoleLogger struct {}
+type ConsoleLogger struct{}
+
 var Console = ConsoleLogger{}
 
 func (ConsoleLogger) Debug(m ...interface{}) {

@@ -6,7 +6,6 @@ type Module struct {
 	Commands    []*Command
 }
 
-// Modules by default are initialized with a NilInhibitor. It can be overwritten.
 func NewModule(name string) *Module { // Are these methods even necessary?
 	return &Module{
 		Name:     name,
