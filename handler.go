@@ -1,8 +1,9 @@
 package gourd
 
 type Handler struct {
-	Commands []*Command
-	Modules  []*Module
+	Commands  []*Command
+	Listeners []*ListenerHandler
+	Modules   []*Module
 }
 
 func (handler *Handler) addCommand(cmd *Command) *Command {
@@ -26,6 +27,8 @@ func (handler *Handler) AddModule(mdl *Module) *Module {
 	for _, cmd := range mdl.Commands {
 		handler.addCommand(cmd)
 	}
+
+	handler.Listeners = append(handler.Listeners, mdl.Listeners...)
 
 	return mdl
 }

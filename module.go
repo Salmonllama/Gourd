@@ -4,13 +4,7 @@ type Module struct {
 	Name        string
 	Description string
 	Commands    []*Command
-}
-
-func NewModule(name string) *Module { // Are these methods even necessary?
-	return &Module{
-		Name:     name,
-		Commands: nil,
-	}
+	Listeners   []*ListenerHandler
 }
 
 func (module *Module) NewCommand(aliases ...string) *Command {
@@ -27,6 +21,18 @@ func (module *Module) AddCommands(cmds ...*Command) *Module {
 
 func (module *Module) AddCommand(cmd *Command) *Module {
 	module.Commands = append(module.Commands, cmd)
+
+	return module
+}
+
+func (module *Module) AddListeners(l ...*ListenerHandler) *Module {
+	module.Listeners = append(module.Listeners, l...)
+
+	return module
+}
+
+func (module *Module) AddListener(l *ListenerHandler) *Module {
+	module.Listeners = append(module.Listeners, l)
 
 	return module
 }

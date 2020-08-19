@@ -16,7 +16,7 @@ type Gourd struct {
 }
 
 // Takes a message and decides if it should be treated as a command or not
-func (bot *Gourd) ProcessCommand(_ disgord.Session, evt *disgord.MessageCreate) {
+func (bot *Gourd) processCommand(_ disgord.Session, evt *disgord.MessageCreate) {
 	msg := evt.Message
 	messageContent := msg.Content
 
@@ -123,7 +123,14 @@ func removeSpaces(slice []string) (ret []string) {
 func (bot *Gourd) hasPermission(ctx CommandContext) bool {
 	inhibitor := ctx.Command.Inhibitor.(InhibitorHandler)
 
-	return inhibitor.handle(ctx)
+func registerListeners(client *disgord.Client, listeners ...*Listener) {
+	for _, l := range listeners {
+		if len(l.Middlewares) == 0 {
+			client.On(l.Type, l.OnEvent)
+		} else {
+			client.On(l.Type, l.OnEvent)
+		}
+	}
 }
 
 func (bot *Gourd) AddModule(mdl *Module) *Gourd {
@@ -167,7 +174,7 @@ func New(token string, ownerId string, defaultPrefix string) *Gourd {
 		keywords:      make(map[string]string, 0),
 	}
 
-	client.On(disgord.EvtMessageCreate, gourd.ProcessCommand)
+	client.On(disgord.EvtMessageCreate, gourd.processCommand)
 
 	return gourd
 }
