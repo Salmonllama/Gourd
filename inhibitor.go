@@ -19,7 +19,7 @@ type RoleInhibitor struct {
 }
 
 // Will return false in the case of private messages -> no roles
-func (roleInhibitor *RoleInhibitor) handle(userRoles []disgord.Snowflake) bool {
+func (roleInhibitor RoleInhibitor) handle(userRoles []disgord.Snowflake) bool {
 	requiredRole := roleInhibitor.Value // This will be the ID
 
 	for _, role := range userRoles {
@@ -41,7 +41,7 @@ type PermissionInhibitor struct {
 }
 
 // Will return false in the case of private messages -> no discord permissions
-func (permissionInhibitor *PermissionInhibitor) handle(userPerm disgord.PermissionBits) bool {
+func (permissionInhibitor PermissionInhibitor) handle(userPerm disgord.PermissionBits) bool {
 	requiredPerm := permissionInhibitor.Value
 
 	if userPerm&disgord.PermissionAdministrator > 0 { // Admin is a diff. permission
