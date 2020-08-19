@@ -111,6 +111,51 @@ func (bot *Gourd) separateCommand(message string) (command string, args []string
 	return
 }
 
+// parseArgs parses through given arguments for validity
+func parseArgs(args []string, command *Command) (bool, error) {
+	requiredArgs := command.Arguments
+	if len(requiredArgs) == 0 {
+		return true, nil
+	}
+
+	if len(args) == 0 && len(requiredArgs) != 0 {
+		return false, &ArgumentError{Arguments: requiredArgs}
+	}
+
+	for i, reqArg := range requiredArgs {
+		if reqArg.IsOptional { // Ignore it if the reqArg is optional
+			continue
+		}
+
+		if reqArg.UseRemainder {
+			// Remainder must be string? break and return?
+			return true, nil
+		}
+
+		if reqArg.IsQuoted {
+			// handle quoted arguments, planned for a later update.
+		}
+
+		if !internal.IsSet(args, i) { // Might need to args[len(args) +1] to add as last element; may overwrite elements
+			args[i] = reqArg.Default
+		}
+
+		// Parse the types now, I guess
+		switch reqArg.Type {
+		case TextArg:
+			continue
+		case NumericArg:
+			if !internal.IsNumeric(args[i]) {
+				return false, &ArgumentError{Arguments: requiredArgs}
+			}
+		case EmojiArg:
+			// EmojiArg is not implemented yet, and kind of a low priority
+		}
+	}
+
+	return true, nil
+}
+
 func removeSpaces(slice []string) (ret []string) {
 	for i, s := range slice {
 		if s != "" {
