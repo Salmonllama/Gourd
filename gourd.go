@@ -28,29 +28,26 @@ func (bot *Gourd) processCommand(_ disgord.Session, evt *disgord.MessageCreate) 
 	// Blacklist checks go here
 
 	// Check validity and find the prefix that was used
-	valid, usedPrefix := bot.usesPrefix(msg)
+	valid, usedPrefix := usesPrefix(msg, bot.defaultPrefix)
 	if !valid {
 		return
 	}
 
 	// Trim the prefix from the message
-	trimmedMessage := bot.trimPrefix(messageContent, usedPrefix)
+	trimmedMessage := trimPrefix(messageContent, usedPrefix)
 
 	// Split the trimmed message into command and command args
-	commandString, args := bot.separateCommand(trimmedMessage)
+	commandString, args := separateCommand(trimmedMessage)
 
 	// Check that it's actually a command
 	if len(msg.Content) == 1 {
 		return
 	}
 
-	// Handle argument parsing
-
 	// Check if it's an existing command
 	for _, cmd := range bot.handler.Commands {
 		for _, alias := range cmd.Aliases {
 			if alias == strings.ToLower(commandString) {
-				// Parse arguments
 
 				// Create the command's context
 				ctx := CommandContext{
@@ -63,15 +60,25 @@ func (bot *Gourd) processCommand(_ disgord.Session, evt *disgord.MessageCreate) 
 					Gourd:         bot,
 				}
 
+				// Check for DM allowance
+				if cmd.Private == false && ctx.IsPrivate() {
+					ctx.Reply("This command cannot be used in a DM")
+					return
+				}
+
+				// Handle argument parsing
+				// Check if the supplied arguments match the command's required arguments
+				// TODO: Complete argument parsing. It's not ready, and will be available in a future release.
+				//isValidArgs, err := parseArgs(args, cmd)
+				//if err != nil {
+				//	Console.Err(err.Error())
+				//	return
+				//}
+
 				// Check if the user has permission to pass inhibition
-				if !bot.hasPermission(ctx) {
-					// Send the inhibitors no-no response, if not nil
-					if ctx.Command.Inhibitor.(Inhibitor).Response != nil {
-						_, err := ctx.Reply(ctx.Command.Inhibitor.(Inhibitor).Response)
-						if err != nil {
-							internal.PrintCheck(err)
-						}
-					}
+				if !hasPermission(&ctx) {
+					// Prevent usage
+					return
 				}
 
 				// Run the command
@@ -82,16 +89,16 @@ func (bot *Gourd) processCommand(_ disgord.Session, evt *disgord.MessageCreate) 
 }
 
 // usesPrefix checks to see if the message starts with a registered prefix and therefore will trigger the command
-func (bot *Gourd) usesPrefix(msg *disgord.Message) (bool, string) {
-	if strings.HasPrefix(msg.Content, bot.defaultPrefix) { // TODO: else if server specific prefix
-		return true, bot.defaultPrefix
+func usesPrefix(msg *disgord.Message, prefix string) (bool, string) {
+	if strings.HasPrefix(msg.Content, prefix) {
+		return true, prefix
 	} else {
 		return false, ""
 	}
 }
 
 // trimPrefix returns the message without the prefix
-func (bot *Gourd) trimPrefix(message string, usedPrefix string) string {
+func trimPrefix(message string, usedPrefix string) string {
 	m := 0
 	n := len(usedPrefix)
 	for i := range message {
@@ -104,7 +111,7 @@ func (bot *Gourd) trimPrefix(message string, usedPrefix string) string {
 }
 
 // separateCommand splits the message into a command and a slice of command arguments, if present
-func (bot *Gourd) separateCommand(message string) (command string, args []string) {
+func separateCommand(message string) (command string, args []string) {
 	split := strings.Split(message, " ")
 	command = split[0]
 	args = removeSpaces(split[1:])
@@ -165,8 +172,64 @@ func removeSpaces(slice []string) (ret []string) {
 	return
 }
 
-func (bot *Gourd) hasPermission(ctx CommandContext) bool {
-	inhibitor := ctx.Command.Inhibitor.(InhibitorHandler)
+func hasPermission(ctx *CommandContext) bool {
+	inhibitor := ctx.Command.Inhibitor
+
+	switch i := inhibitor.(type) {
+	case NilInhibitor:
+		return true
+	case RoleInhibitor:
+		if ctx.IsPrivate() {
+			return false
+		}
+
+		r := i.handle(ctx.AuthorMember().Roles)
+		if r == false && i.Response != nil {
+			ctx.Reply(i.Response)
+		}
+
+		return r
+	case PermissionInhibitor:
+		if ctx.IsPrivate() {
+			return false
+		}
+
+		guild, err := ctx.Guild()
+		if err != nil {
+			Console.Err(err)
+		}
+
+		userPerms, err := ctx.Client.GetMemberPermissions(context.Background(), guild.ID, ctx.Author().ID)
+		if err != nil {
+			Console.Err(err)
+		}
+
+		r := i.handle(userPerms)
+		if r == false && i.Response != nil {
+			ctx.Reply(i.Response)
+		}
+
+		return r
+	case KeywordInhibitor:
+		r := ctx.Gourd.HasKeyword(ctx.Author().ID.String(), i.Value)
+
+		if r == false && i.Response != nil {
+			ctx.Reply(i.Response)
+		}
+
+		return r
+	case OwnerInhibitor:
+		r := ctx.IsAuthorOwner()
+
+		if r == false && i.Response != nil {
+			ctx.Reply(i.Response)
+		}
+
+		return r
+	default:
+		return false
+	}
+}
 
 func registerListeners(client *disgord.Client, listeners ...*Listener) {
 	for _, l := range listeners {
@@ -188,10 +251,15 @@ func (bot *Gourd) AddModules(modules ...*Module) *Gourd {
 
 	return bot
 }
+
+// AddKeyword adds a keyword permission to the given user.
+// This keyword is stored in runtime memory and used in the KeywordInhibitor
 func (bot *Gourd) AddKeyword(userId string, keyword string) {
 	bot.keywords[userId] = keyword
 }
 
+// HasKeyword checks if the user has the given keyword.
+// This is automatically checked by the KeywordInhibitor.
 func (bot *Gourd) HasKeyword(userId string, keyword string) bool {
 	return bot.keywords[userId] == keyword
 }
@@ -199,7 +267,9 @@ func (bot *Gourd) HasKeyword(userId string, keyword string) bool {
 // Connect opens the connection to discord
 func (bot *Gourd) Connect() error {
 	err := bot.client.StayConnectedUntilInterrupted(context.Background())
-	internal.Check(err)
+	if err != nil {
+		return err
+	}
 	return nil
 }
 

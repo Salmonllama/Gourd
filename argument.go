@@ -9,9 +9,11 @@ const (
 )
 
 type Argument struct {
-	Name       string
-	Descriptor string
-	Type       ArgType
-	Optional   bool
-	Default    string
+	Name         string
+	Descriptor   string
+	Type         ArgType
+	IsOptional   bool
+	UseRemainder bool
+	IsQuoted     bool
+	Default      string
 }
