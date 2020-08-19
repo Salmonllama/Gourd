@@ -8,12 +8,12 @@ import (
 func TestRoleHandler(t *testing.T) {
 	ctx := CommandContext{
 		Command: &Command{
-			Inhibitor:   RoleInhibitor{
-				Value:    "472232069301534726",
+			Inhibitor: RoleInhibitor{
+				Value: "472232069301534726",
 			},
 		},
 	}
-	
+
 	roleId := disgord.Snowflake(472232069301534726)
 	userRoles := []disgord.Snowflake{roleId}
 
@@ -26,7 +26,7 @@ func TestPermissionHandler(t *testing.T) {
 	ctx := CommandContext{
 		Command: &Command{
 			Inhibitor: PermissionInhibitor{
-				Value:    disgord.PermissionAddReactions,
+				Value: disgord.PermissionAddReactions,
 			},
 		},
 	}
