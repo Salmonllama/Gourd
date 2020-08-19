@@ -1,31 +1,17 @@
 package gourd
 
 type Module struct {
-	Name      string
-	Inhibitor interface{}
-	Commands  []*Command
-}
-
-// Modules by default are initialized with a NilInhibitor. It can be overwritten.
-func NewModule(name string) *Module {
-	return &Module{
-		Name:      name,
-		Commands:  nil,
-		Inhibitor: NilInhibitor{},
-	}
+	Name        string
+	Description string
+	Commands    []*Command
+	Listeners   []*ListenerHandler
 }
 
 func (module *Module) NewCommand(aliases ...string) *Command {
 	return &Command{
-		name:    aliases[0],
-		aliases: aliases,
-		module:  module,
+		Name:    aliases[0],
+		Aliases: aliases,
 	}
-}
-
-func (module *Module) SetInhibitor(inhibitor interface{}) *Module {
-	module.Inhibitor = inhibitor
-	return module
 }
 
 func (module *Module) AddCommands(cmds ...*Command) *Module {
@@ -35,6 +21,18 @@ func (module *Module) AddCommands(cmds ...*Command) *Module {
 
 func (module *Module) AddCommand(cmd *Command) *Module {
 	module.Commands = append(module.Commands, cmd)
+
+	return module
+}
+
+func (module *Module) AddListeners(l ...*ListenerHandler) *Module {
+	module.Listeners = append(module.Listeners, l...)
+
+	return module
+}
+
+func (module *Module) AddListener(l *ListenerHandler) *Module {
+	module.Listeners = append(module.Listeners, l)
 
 	return module
 }
