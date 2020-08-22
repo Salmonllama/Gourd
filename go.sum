@@ -1,5 +1,7 @@
 github.com/BurntSushi/toml v0.3.1 h1:WXkYYl6Yr3qBf1K79EBnL4mak0OimBfB0XUf9Vl28OQ=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
+github.com/Salmonllama/Gourd v1.2.0 h1:esvm52N092npBL48ZLWTTBUbeHlPD7/IWEy6BUjIm+E=
+github.com/Salmonllama/Gourd v1.2.0/go.mod h1:DDUhHGJD6pg969Vi/1wUt8ajm6AghQ0BXseD/EZi3jw=
 github.com/andersfylling/disgord v0.16.3 h1:TL50H6MhUWqrvHFrudEzeooSyhmdt9RxJEYoI0drt8U=
 github.com/andersfylling/disgord v0.16.3/go.mod h1:SjjWjZGIQauOgHxYdIGrixqLAV6JykVagv374iHoFBY=
 github.com/andersfylling/disgord v0.18.0 h1:IUSLOHk7ll6UeZi64W313KuJjmUtBSe5I8f3CL1w5qk=
