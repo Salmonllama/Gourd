@@ -2,7 +2,7 @@ package gourd
 
 import (
 	"context"
-	"github.com/Salmonllama/gourd/internal"
+	"github.com/salmonllama/gourd/internal"
 	"github.com/andersfylling/disgord"
 	"strings"
 )
