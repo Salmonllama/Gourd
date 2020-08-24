@@ -1,4 +1,4 @@
-module github.com/Salmonllama/gourd
+module github.com/salmonllama/gourd
 
 go 1.14
 
