@@ -2,6 +2,8 @@
 
 #### A bot wrapper, command handler, and listener manager for the Disgord library
 
+**Please Note: Gourd is in active development, so documentation, examples, and the wiki isn't always going to be up-to-date.**
+
 For a quick usage example, see the examples folder. For the moment, it covers creating a Gourd wrapper, and 
 registering a module with commands. The wiki will be created soon(tm) and will cover all facets of Gourd in detail.
 
