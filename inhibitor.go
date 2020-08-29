@@ -4,13 +4,11 @@ import (
 	"github.com/andersfylling/disgord"
 )
 
-// NilInhibitor.
-// Allows command usage no matter what.
+// NilInhibitor allows command usage no matter what.
 // Does not have a value or a response
 type NilInhibitor struct{}
 
-// RoleInhibitor.
-// Allows command usage if the user has the role (value).
+// RoleInhibitor allows command usage if the user has the role (value).
 // Value is the string ID of the role, **NOT the snowflake!**.
 // This inhibitor will not work in private messages as there are no roles.
 type RoleInhibitor struct {
@@ -31,8 +29,7 @@ func (roleInhibitor RoleInhibitor) handle(userRoles []disgord.Snowflake) bool {
 	return false
 }
 
-// PermissionInhibitor.
-// Allows command usage if the user has the permission bit (value).
+// PermissionInhibitor allows command usage if the user has the permission bit (value).
 // Value is the disgord.PermissionBit. It is recommended to use disgord.PermissionBlahBlah.
 // This inhibitor will not work in private messages as there are no permissions.
 type PermissionInhibitor struct {
@@ -55,8 +52,7 @@ func (permissionInhibitor PermissionInhibitor) handle(userPerm disgord.Permissio
 	return false
 }
 
-// KeywordInhibitor.
-// Allows command usage if the user has the given keyword.
+// KeywordInhibitor allows command usage if the user has the given keyword.
 // Value is the string keyword they should be assigned to.
 // See <wiki link here> for keyword how-tos
 type KeywordInhibitor struct {
@@ -64,8 +60,7 @@ type KeywordInhibitor struct {
 	Response interface{}
 }
 
-// OwnerInhibitor.
-// Allows command usage only if the user is the bot owner.
+// OwnerInhibitor allows command usage only if the user is the bot owner.
 // Does not have a value; the owner ID is supplied in Gourd initialization.
 type OwnerInhibitor struct {
 	Response interface{}
