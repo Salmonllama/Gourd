@@ -48,5 +48,5 @@ func (ctx *CommandContext) AuthorMember() *disgord.Member {
 }
 
 func (ctx *CommandContext) IsAuthorOwner() bool {
-	return ctx.Author().ID.String() == ctx.Gourd.ownerId
+	return ctx.Author().ID.String() == ctx.Gourd.OwnerId
 }

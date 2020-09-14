@@ -2,17 +2,17 @@ package gourd
 
 import (
 	"context"
-	"github.com/salmonllama/gourd/internal"
 	"github.com/andersfylling/disgord"
+	"github.com/salmonllama/gourd/internal"
 	"strings"
 )
 
 type Gourd struct {
-	client        *disgord.Client // TODO: Embedded type? BOOK
-	defaultPrefix string
-	handler       *Handler
-	ownerId       string
-	keywords      map[string]string
+	Client        *disgord.Client // TODO: Embedded type? BOOK
+	DefaultPrefix string
+	Handler       *Handler
+	OwnerId       string
+	Keywords      map[string]string
 }
 
 // Takes a message and decides if it should be treated as a command or not
@@ -28,7 +28,7 @@ func (bot *Gourd) processCommand(_ disgord.Session, evt *disgord.MessageCreate) 
 	// Blacklist checks go here
 
 	// Check validity and find the prefix that was used
-	valid, usedPrefix := usesPrefix(msg, bot.defaultPrefix)
+	valid, usedPrefix := usesPrefix(msg, bot.DefaultPrefix)
 	if !valid {
 		return
 	}
@@ -45,7 +45,7 @@ func (bot *Gourd) processCommand(_ disgord.Session, evt *disgord.MessageCreate) 
 	}
 
 	// Check if it's an existing command
-	for _, cmd := range bot.handler.Commands {
+	for _, cmd := range bot.Handler.Commands {
 		for _, alias := range cmd.Aliases {
 			if alias == strings.ToLower(commandString) {
 
@@ -56,7 +56,7 @@ func (bot *Gourd) processCommand(_ disgord.Session, evt *disgord.MessageCreate) 
 					Args:          args,
 					CommandString: commandString,
 					Message:       msg,
-					Client:        bot.client,
+					Client:        bot.Client,
 					Gourd:         bot,
 				}
 
@@ -242,12 +242,12 @@ func registerListeners(client *disgord.Client, listeners ...*Listener) {
 }
 
 func (bot *Gourd) AddModule(mdl *Module) *Gourd {
-	bot.handler.AddModule(mdl)
+	bot.Handler.AddModule(mdl)
 	return bot
 }
 
 func (bot *Gourd) AddModules(modules ...*Module) *Gourd {
-	bot.handler.Modules = append(bot.handler.Modules, modules...)
+	bot.Handler.Modules = append(bot.Handler.Modules, modules...)
 
 	return bot
 }
@@ -255,18 +255,18 @@ func (bot *Gourd) AddModules(modules ...*Module) *Gourd {
 // AddKeyword adds a keyword permission to the given user.
 // This keyword is stored in runtime memory and used in the KeywordInhibitor
 func (bot *Gourd) AddKeyword(userId string, keyword string) {
-	bot.keywords[userId] = keyword
+	bot.Keywords[userId] = keyword
 }
 
 // HasKeyword checks if the user has the given keyword.
 // This is automatically checked by the KeywordInhibitor.
 func (bot *Gourd) HasKeyword(userId string, keyword string) bool {
-	return bot.keywords[userId] == keyword
+	return bot.Keywords[userId] == keyword
 }
 
 // Connect opens the connection to discord
 func (bot *Gourd) Connect() error {
-	err := bot.client.StayConnectedUntilInterrupted(context.Background())
+	err := bot.Client.StayConnectedUntilInterrupted(context.Background())
 	if err != nil {
 		return err
 	}
@@ -282,11 +282,11 @@ func New(token string, ownerId string, defaultPrefix string) *Gourd {
 	handler := Handler{}
 
 	gourd := &Gourd{
-		client:        client,
-		defaultPrefix: defaultPrefix,
-		handler:       &handler,
-		ownerId:       ownerId,
-		keywords:      make(map[string]string, 0),
+		Client:        client,
+		DefaultPrefix: defaultPrefix,
+		Handler:       &handler,
+		OwnerId:       ownerId,
+		Keywords:      make(map[string]string, 0),
 	}
 
 	client.On(disgord.EvtMessageCreate, gourd.processCommand)
