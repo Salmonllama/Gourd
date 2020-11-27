@@ -1,9 +1,10 @@
 package main
 
 import (
-	"github.com/Salmonllama/Gourd"
-	"github.com/Salmonllama/Gourd/_examples/Separate-Modules/modules"
 	"os"
+
+	"github.com/salmonllama/gourd"
+	"github.com/salmonllama/gourd/_examples/Separate-Modules/modules"
 )
 
 func main() {

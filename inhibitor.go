@@ -33,12 +33,12 @@ func (roleInhibitor RoleInhibitor) handle(userRoles []disgord.Snowflake) bool {
 // Value is the disgord.PermissionBit. It is recommended to use disgord.PermissionBlahBlah.
 // This inhibitor will not work in private messages as there are no permissions.
 type PermissionInhibitor struct {
-	Value    uint64
+	Value    disgord.PermissionBit
 	Response interface{}
 }
 
 // Will return false in the case of private messages -> no discord permissions
-func (permissionInhibitor PermissionInhibitor) handle(userPerm disgord.PermissionBits) bool {
+func (permissionInhibitor PermissionInhibitor) handle(userPerm disgord.PermissionBit) bool {
 	requiredPerm := permissionInhibitor.Value
 
 	if userPerm&disgord.PermissionAdministrator > 0 { // Admin is a diff. permission
