@@ -1,8 +1,9 @@
 package main
 
 import (
-	"github.com/Salmonllama/Gourd"
 	"os"
+
+	"github.com/salmonllama/gourd"
 )
 
 func main() {

@@ -1,10 +1,11 @@
 package modules
 
 import (
-	"context"
-	"github.com/Salmonllama/Gourd"
-	"github.com/andersfylling/disgord"
 	"strings"
+
+	"github.com/andersfylling/disgord"
+
+	"github.com/salmonllama/gourd"
 )
 
 var ModerationModule = &gourd.Module{
@@ -27,13 +28,13 @@ func kick() (command *gourd.Command) {
 			return
 		}
 
-		users := ctx.Message().Mentions                      // Get any mentioned users
-		reason := strings.Join(ctx.Args()[len(users):], " ") // Reason starts after the user mentions
+		users := ctx.Message.Mentions                      // Get any mentioned users
+		reason := strings.Join(ctx.Args[len(users):], " ") // Reason starts after the user mentions
 
+		kickBuilder := ctx.Client.Guild(ctx.Message.GuildID)
 		for _, user := range users {
-			err := ctx.Client().KickMember(context.Background(), ctx.Guild().ID, user.ID, reason)
-			if err != nil {
-				// Handle the error
+			if err := kickBuilder.Member(user.ID).Kick(reason); err != nil {
+				// TODO: handle the error
 			}
 		}
 	})
@@ -52,18 +53,18 @@ func ban() (command *gourd.Command) {
 			return
 		}
 
-		users := ctx.Message().Mentions                      // Get any mentioned users
-		reason := strings.Join(ctx.Args()[len(users):], " ") // Reason starts after the user mentions
+		users := ctx.Message.Mentions                      // Get any mentioned users
+		reason := strings.Join(ctx.Args[len(users):], " ") // Reason starts after the user mentions
 
+		banBuilder := ctx.Client.Guild(ctx.Message.GuildID)
 		for _, user := range users {
 			banParams := &disgord.BanMemberParams{
 				DeleteMessageDays: 30,
 				Reason:            reason,
 			}
 
-			err := ctx.Client().BanMember(context.Background(), ctx.Guild().ID, user.ID, banParams)
-			if err != nil {
-				// Handle the error
+			if err := banBuilder.Member(user.ID).Ban(banParams); err != nil {
+				// TODO: handle the error
 			}
 		}
 	})

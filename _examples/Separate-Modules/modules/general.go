@@ -1,7 +1,7 @@
 package modules
 
 import (
-	"github.com/Salmonllama/Gourd"
+	"github.com/salmonllama/gourd"
 )
 
 var GeneralModule = &gourd.Module{
