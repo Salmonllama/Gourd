@@ -31,7 +31,7 @@ func (ctx *CommandContext) IsPrivate() bool {
 }
 
 func (ctx *CommandContext) Guild() (*disgord.Guild, error) {
-	guild, err := ctx.Client.GetGuild(context.Background(), ctx.Message.GuildID)
+	guild, err := ctx.Client.Guild(ctx.Message.GuildID).Get()
 	if err != nil {
 		return nil, err
 	}

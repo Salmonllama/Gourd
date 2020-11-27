@@ -1,10 +1,11 @@
 package gourd
 
 import (
-	"context"
-	"github.com/salmonllama/gourd/internal"
-	"github.com/andersfylling/disgord"
 	"strings"
+
+	"github.com/andersfylling/disgord"
+
+	"github.com/salmonllama/gourd/internal"
 )
 
 type Gourd struct {
@@ -199,7 +200,7 @@ func hasPermission(ctx *CommandContext) bool {
 			Console.Err(err)
 		}
 
-		userPerms, err := ctx.Client.GetMemberPermissions(context.Background(), guild.ID, ctx.Author().ID)
+		userPerms, err := ctx.Client.Guild(guild.ID).Member(ctx.Author().ID).GetPermissions()
 		if err != nil {
 			Console.Err(err)
 		}
@@ -266,7 +267,7 @@ func (bot *Gourd) HasKeyword(userId string, keyword string) bool {
 
 // Connect opens the connection to discord
 func (bot *Gourd) Connect() error {
-	err := bot.client.StayConnectedUntilInterrupted(context.Background())
+	err := bot.client.Gateway().StayConnectedUntilInterrupted()
 	if err != nil {
 		return err
 	}
@@ -289,7 +290,7 @@ func New(token string, ownerId string, defaultPrefix string) *Gourd {
 		keywords:      make(map[string]string, 0),
 	}
 
-	client.On(disgord.EvtMessageCreate, gourd.processCommand)
+	client.Gateway().MessageCreate(gourd.processCommand)
 
 	return gourd
 }
