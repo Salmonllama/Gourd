@@ -233,13 +233,14 @@ func hasPermission(ctx *CommandContext) bool {
 }
 
 func registerListeners(client *disgord.Client, listeners ...*Listener) {
-	for _, l := range listeners {
-		if len(l.Middlewares) == 0 {
-			client.On(l.Type, l.OnEvent)
-		} else {
-			client.On(l.Type, l.OnEvent)
-		}
-	}
+	panic("not yet implemented!")
+	// for _, l := range listeners {
+	// 	if len(l.Middlewares) == 0 {
+	// 		client.On(l.Type, l.OnEvent)
+	// 	} else {
+	// 		client.On(l.Type, l.OnEvent)
+	// 	}
+	// }
 }
 
 func (bot *Gourd) AddModule(mdl *Module) *Gourd {
