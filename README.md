@@ -9,7 +9,7 @@ registering a module with commands. The wiki will be created soon(tm) and will c
 
 I do not have a dedicated discord server to support this project [yet?] 
 but I can be found on the official unofficial DiscordAPI server, 
-and reached via DM at Salmonllama#5727.
+and reached via DM at Salmonllama#7233.
 
 #### Important things to note:
 
