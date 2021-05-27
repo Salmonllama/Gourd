@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/Salmonllama/Gourd"
+	"github.com/salmonllama/gourd"
 	"os"
 )
 
@@ -12,7 +12,10 @@ func main() {
 func lifecycle() int {
 	bot := startup()
 	if bot != nil {
-		bot.Connect() // Bot logs in here
+		err := bot.Connect() // Bot logs in here
+		if err != nil {
+			panic(err)
+		}
 	}
 
 	return 0
@@ -22,17 +25,21 @@ func startup() *gourd.Gourd {
 	// Create modules, perform pre-login startup stuff
 	// This can include creating modules/commands (not recommended, see the Separate-Modules section)
 	GeneralModule := &gourd.Module{
-		Name:      "General",
-		Inhibitor: gourd.NilInhibitor{}, // Permissions are set on a per-module basis, through inhibitors, see the wiki for more info
+		Name:        "General",
+		Description: "The general module",
 	}
 
-	PingCommand := GeneralModule.NewCommand("ping") // Set Aliases here. Command.name also becomes the first alias
+	PingCommand := gourd.Command{
+		Name:        "Ping",
+		Description: "Pings the bot",
+		Aliases:     []string{"ping"},
+		Inhibitor:   gourd.NilInhibitor{}, // Inhibitors are set for each command. See the wiki page for more info on Inhibitors
+		Arguments:   nil,
+		Private:     true,
+		Run:         func(ctx gourd.CommandContext) { ctx.Reply("Pong!") },
+	}
 
-	PingCommand.SetOnAction(func(ctx gourd.CommandContext) { // Command logic is set here
-		ctx.Reply("Pong!")
-	})
-
-	GeneralModule.AddCommand(PingCommand)
+	GeneralModule.AddCommand(&PingCommand)
 
 	// Creates a new instance of Gourd
 	bot := gourd.New("login-token-here",

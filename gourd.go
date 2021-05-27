@@ -1,9 +1,8 @@
 package gourd
 
 import (
-	"context"
-	"github.com/salmonllama/gourd/internal"
 	"github.com/andersfylling/disgord"
+	"github.com/salmonllama/gourd/internal"
 	"strings"
 )
 
@@ -199,7 +198,7 @@ func hasPermission(ctx *CommandContext) bool {
 			Console.Err(err)
 		}
 
-		userPerms, err := ctx.Client.GetMemberPermissions(context.Background(), guild.ID, ctx.Author().ID)
+		userPerms, err := ctx.Client.Guild(guild.ID).Member(ctx.Author().ID).GetPermissions()
 		if err != nil {
 			Console.Err(err)
 		}
@@ -231,14 +230,16 @@ func hasPermission(ctx *CommandContext) bool {
 	}
 }
 
+// TODO: Disabled until listener implementation
 func registerListeners(client *disgord.Client, listeners ...*Listener) {
-	for _, l := range listeners {
+	panic("Listener modules have not been implemented yet!")
+	/*for _, l := range listeners {
 		if len(l.Middlewares) == 0 {
 			client.On(l.Type, l.OnEvent)
 		} else {
 			client.On(l.Type, l.OnEvent)
 		}
-	}
+	}*/
 }
 
 func (bot *Gourd) AddModule(mdl *Module) *Gourd {
@@ -265,11 +266,9 @@ func (bot *Gourd) HasKeyword(userId string, keyword string) bool {
 }
 
 // Connect opens the connection to discord
-func (bot *Gourd) Connect() error {
-	err := bot.client.StayConnectedUntilInterrupted(context.Background())
-	if err != nil {
-		return err
-	}
+func (bot *Gourd) Connect() error { // TODO: Add a prefix middleware.
+	defer bot.client.Gateway().StayConnectedUntilInterrupted()
+
 	return nil
 }
 
@@ -289,7 +288,7 @@ func New(token string, ownerId string, defaultPrefix string) *Gourd {
 		keywords:      make(map[string]string, 0),
 	}
 
-	client.On(disgord.EvtMessageCreate, gourd.processCommand)
+	client.Gateway().MessageCreate(gourd.processCommand)
 
 	return gourd
 }

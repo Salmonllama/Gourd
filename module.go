@@ -4,7 +4,7 @@ type Module struct {
 	Name        string
 	Description string
 	Commands    []*Command
-	Listeners   []*ListenerHandler
+	Listeners   []*ListenerHandler // TO BE IMPLEMENTED
 }
 
 func (module *Module) NewCommand(aliases ...string) *Command {

@@ -1,72 +1,64 @@
 package modules
 
 import (
-	"context"
-	"github.com/Salmonllama/Gourd"
 	"github.com/andersfylling/disgord"
+	"github.com/salmonllama/gourd"
 	"strings"
 )
 
-var ModerationModule = &gourd.Module{
-	Name: "Moderation",
+func Kick(ctx gourd.CommandContext) {
+	users := ctx.Message.Mentions
+	reason := strings.Join(ctx.Args[len(users):], " ")
+
+	for _, user := range users {
+		err := ctx.Client.Guild(ctx.Message.GuildID).Member(user.ID).Kick(reason)
+		if err != nil {
+			panic(err)
+		}
+	}
+}
+
+func Ban(ctx gourd.CommandContext) {
+	users := ctx.Message.Mentions
+	reason := strings.Join(ctx.Args[len(users):], " ")
+
+	for _, user := range users {
+		params := disgord.BanMemberParams{Reason: reason}
+		err := ctx.Client.Guild(ctx.Message.GuildID).Member(user.ID).Ban(&params)
+		if err != nil {
+			panic(err)
+		}
+	}
+}
+
+var KickCommand = gourd.Command{
+	Name:        "Kick",
+	Description: "Kicks the mentioned users from the guild. Does not work in DMs",
+	Aliases:     []string{"kick", "boot"},
 	Inhibitor: gourd.PermissionInhibitor{
-		Value:    disgord.PermissionManageServer,                               // Manage Server is required to use any commands in this module
-		Response: "You need the Manage Server permission to use this command!", // Can also be any interface{} supported by disgord -> client.SendMsg()
+		Value:    disgord.PermissionKickMembers,
+		Response: "You require permission: Kick members.",
 	},
-	Commands: []*gourd.Command{kick(), ban()},
+	Arguments: nil, // Not yet implemented
+	Private:   false,
+	Run:       Kick,
 }
 
-func kick() (command *gourd.Command) {
-	command = ModerationModule.NewCommand("kick", "boot", "bai") // Aliases are mandatory
-	command.SetDescription("Kicks the mentioned users")          // Description is optional
-	command.SetHelp("[]users, reason for the kick")              // Help is optional
-
-	command.SetOnAction(func(ctx gourd.CommandContext) {
-		if ctx.IsPrivate() {
-			ctx.Reply("This command can only be used within a server!")
-			return
-		}
-
-		users := ctx.Message().Mentions                      // Get any mentioned users
-		reason := strings.Join(ctx.Args()[len(users):], " ") // Reason starts after the user mentions
-
-		for _, user := range users {
-			err := ctx.Client().KickMember(context.Background(), ctx.Guild().ID, user.ID, reason)
-			if err != nil {
-				// Handle the error
-			}
-		}
-	})
-
-	return
+var BanCommand = gourd.Command{
+	Name:        "Ban",
+	Description: "Bans the mentioned users from the guild. Does not work in DMs.",
+	Aliases:     []string{"ban", "banana", "hammer"},
+	Inhibitor: gourd.PermissionInhibitor{
+		Value:    disgord.PermissionBanMembers,
+		Response: "You require permission: Ban members.",
+	},
+	Arguments: nil, // Not yet implemented
+	Private:   false,
+	Run:       Ban,
 }
 
-func ban() (command *gourd.Command) {
-	command = ModerationModule.NewCommand("ban", "banana", "hammertime")
-	command.SetDescription("Bans the mentioned users")
-	command.SetHelp("[]users, reason for the ban")
-
-	command.SetOnAction(func(ctx gourd.CommandContext) {
-		if ctx.IsPrivate() {
-			ctx.Reply("This command can only be used within a server!")
-			return
-		}
-
-		users := ctx.Message().Mentions                      // Get any mentioned users
-		reason := strings.Join(ctx.Args()[len(users):], " ") // Reason starts after the user mentions
-
-		for _, user := range users {
-			banParams := &disgord.BanMemberParams{
-				DeleteMessageDays: 30,
-				Reason:            reason,
-			}
-
-			err := ctx.Client().BanMember(context.Background(), ctx.Guild().ID, user.ID, banParams)
-			if err != nil {
-				// Handle the error
-			}
-		}
-	})
-
-	return
+var ModuleModeration = &gourd.Module{
+	Name:        "Moderation",
+	Description: "All moderation commands and functions",
+	Commands:    []*gourd.Command{&KickCommand, &BanCommand},
 }

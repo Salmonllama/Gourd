@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/Salmonllama/Gourd"
-	"github.com/Salmonllama/Gourd/_examples/Separate-Modules/modules"
+	"github.com/salmonllama/gourd"
+	"github.com/salmonllama/gourd/_examples/Separate-Modules/modules"
 	"os"
 )
 
@@ -13,7 +13,7 @@ func main() {
 func lifecycle() int {
 	bot := startup()
 	if bot != nil {
-		bot.Connect()
+		defer bot.Connect()
 	}
 
 	return 0
@@ -30,8 +30,8 @@ func startup() *gourd.Gourd {
 	// Add any defined modules
 	// Don't forget to add your commands to your modules!
 	bot.AddModules(
-		modules.GeneralModule,
-		modules.ModerationModule,
+		modules.ModuleGeneral,
+		modules.ModuleModeration,
 	)
 
 	return bot
